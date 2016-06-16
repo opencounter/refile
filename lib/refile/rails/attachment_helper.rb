@@ -6,13 +6,15 @@ module Refile
       # @see AttachmentHelper#attachment_field
       def attachment_field(method, options = {})
         self.multipart = true
-        @template.attachment_field(@object_name, method, objectify_options(options))
+        options = objectify_options(options) unless options.has_key?(:object)
+        @template.attachment_field(@object_name, method, options)
       end
 
       # @see AttachmentHelper#attachment_cache_field
       def attachment_cache_field(method, options = {})
         self.multipart = true
-        @template.attachment_cache_field(@object_name, method, objectify_options(options))
+        options = objectify_options(options) unless options.has_key?(:object)
+        @template.attachment_cache_field(@object_name, method, options)
       end
     end
 
@@ -91,7 +93,8 @@ module Refile
       options[:data][:reference] = SecureRandom.hex
       options[:include_hidden] = false
 
-      attachment_cache_field(object_name, method, object: object, **options) + file_field(object_name, method, options)
+      attachment_cache_field(object_name, method, object: object, **options) +
+        file_field(object_name, method, object: object, **options)
     end
 
     # Generates a hidden form field which tracks the id of the file in the cache
